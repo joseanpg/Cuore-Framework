@@ -1,24 +1,20 @@
-var Service = new Cuore.Class({
+var Service = function() {
+	var name = 'ABSTRACT';
+	var executionPrefix = 'EXECUTED';
+	var SEPARATOR = '_';
+	var lastDataSent = null;
+	var baseURL = '';
 
-    initialize: function () {
-        this.name = 'ABSTRACT';
-        this.typeName = 'Service';
-        this.executionPrefix = 'EXECUTED';
-        this.SEPARATOR = '_';
-        this.lastDataSent = null;
-        this.baseURL = '';
-    },
-
-    execute: function (procedure, params, asynchronous) {
-        var eventName = this.getEventNameForExecution(procedure);
-        this[procedure](params, eventName);
+    this.execute = function (method, params, asynchronous) {
+        var eventName = this.getEventNameForExecution(method);
+        this[method](params, eventName);
 
         if (!asynchronous) {
             this.emit(eventName, params);
         }
-    },
+    };
 
-    request: function (url, params, eventName) {
+    this.request = function (url, params, eventName) {
         new Request.JSON({
             url: url,
             data: {
@@ -30,34 +26,38 @@ var Service = new Cuore.Class({
             }.bind(this)
         }).send();
 
-        this.lastDataSent = params;
-    },
+        lastDataSent = params;
+    };
 
-    emit: function (eventName, params) {
+    this.emit = function (eventName, params) {
         this.getBus().emit(eventName, params);
-    },
+    };
 
-    getEventNameForExecution: function (procedure) {
-        return this.getName() + this.SEPARATOR + procedure + this.SEPARATOR + this.executionPrefix;
-    },
+    this.getEventNameForExecution = function (method) {
+        return name + SEPARATOR + method + SEPARATOR + executionPrefix;
+    };
 
-    getName: function () {
-        return this.name;
-    },
+    this.getName =  function () {
+        return name;
+    };
 
-    getLastDataSent: function () {
-        return this.lastDataSent;
-    },
+    this.getLastDataSent = function () {
+        return lastDataSent;
+    };
 
-    getBaseURL: function () {
-        return this.baseURL;
-    },
+    this.getExecutionPrefix = function() {
+	    return executionPrefix;
+    };
 
-    setBaseURL: function (baseURL) {
-        this.baseURL = baseURL;
-    },
+    this.getBaseURL = function () {
+        return baseURL;
+    };
 
-    getBus: function () {
+    this.setBaseURL = function (GlobalbaseURL) {
+        baseURL = GlobalbaseURL;
+    };
+
+    this.getBus = function () {
         return new Bus();
-    }
-});
+    };
+};

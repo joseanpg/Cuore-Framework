@@ -60,7 +60,7 @@ describe("Service", function () {
 
         expect(aService.testProcedureExecuted).toBeTruthy();
         expect(aService.testProcedureParams).toEqual(params);
-        expect(aService.getBus().broadcastEvent).toBeUndefined();
+        expect(aService.getBus().broadcastEvent).toBeNull();
     });
 
     it("has a BaseURL defaulted to empty string", function () {
@@ -91,7 +91,7 @@ describe("Service", function () {
         var procedureName = "testProcedure";
 
         aService.testProcedure = function (params, eventName) {
-            this.request("http://localhost", params, eventName);
+            aService.request("http://localhost", params, eventName);
         };
 
         var bus = createDummyBus();
@@ -113,7 +113,7 @@ describe("Service", function () {
 
         var procedureName = "procedureTest";
         var SEPARATOR = "_";
-        var expectedName = aService.getName() + SEPARATOR + procedureName + SEPARATOR + aService.executionPrefix;
+        var expectedName = aService.getName() + SEPARATOR + procedureName + SEPARATOR + aService.getExecutionPrefix();
 
         expect(aService.getEventNameForExecution(procedureName)).toEqual(expectedName);
     });
@@ -131,11 +131,11 @@ describe("Service", function () {
     };
  
     var createDummyBus = function() {
-        var aBus = {};
-        aBus.broadcastEvent = undefined;
-
-        aBus.emit = function (event, params) {
-            this.broadcastEvent = event;
+        var aBus = {
+            broadcastEvent: null,
+            emit: function (eventName, params) {
+                this.broadcastEvent = eventName;
+            }
         };
 
         return aBus;

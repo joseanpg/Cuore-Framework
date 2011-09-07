@@ -18,19 +18,18 @@ describe("NullService", function () {
         };
 
         aService.execute(procedureName, params);
-        expect(aService.getBus().broadcastEvent).toBeUndefined();
+        expect(aService.getBus().broadcastEvent).toBeNull();
     });
 
-    function createDummyBus() {
-        var aBus = {};
-
-        aBus.broadcastEvent = undefined;
-
-        aBus.emit = function (event, params) {
-            this.broadcastEvent = event;
+    var createDummyBus = function() {
+        var aBus = {
+            broadcastEvent: null,
+            emit: function (eventName, params) {
+                this.broadcastEvent = eventName;
+            }
         };
 
         return aBus;
-    }
+    };
 
 });

@@ -1,17 +1,6 @@
-var NullService = new Cuore.Class({
-    Extends: Service,
-    Implements: Debuggable,
+var NullService = function() {
+	this.execute = function() {}
+};
 
-    initialize: function () {
-        this.typeName = "NullService";
-        this.name = "NULL";
-    },
-
-    execute: function (procedure, params, asynchronous) {
-        this.debug("NullService.execute(procedure, params, asynchronous)");
-        this.debug(procedure);
-        this.debug(params);
-        this.debug(asynchronous);
-        this.debug("------------------------------------------------------");
-    }
-});
+NullService.prototype.constructor = NullService; 
+NullService.prototype = new Service();

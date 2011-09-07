@@ -1,34 +1,23 @@
-var Page = new Cuore.Class({
+var Page = function(globalURL) {
+	var services = {};
+    var components = {};
+    var cleaners = [];
+    var baseURL = globalURL || '';
 
-    initialize: function (baseURL) {
-        this.services = {};
-        this.components = {};
-        this.cleaners = [];
-        document.page = this;
-        this.baseURL = baseURL || '';
-        this.addService(new LabelsService());
-        this.setUp();
-    },
+    document.page = this;
+    //this.addService(new LabelsService());
 
-    initializeServices: function () {},
-    initializeComponents: function () {},
-
-    setUp: function () {
-        this.initializeServices();
-        this.initializeComponents();
-    },
-
-    addService: function (service) {
+    this.addService = function (service) {
         service.setBaseURL(this.getBaseURL());
         this.services[service.getName()] = service;
-    },
+    };
 
-    getService: function (name) {
-        return this.services[name] || new NullService();
-    },
+    this.getService = function (name) {
+        return services[name] || new NullService();
+    };
 
-    addComponent: function (component, container, replaceContent) {
-        this.subcribeComponentEvents(component);
+    this.addComponent = function (component, container, replaceContent) {
+        subcribeComponentEvents(component);
         component.setName(this.generateUUID());
         this.components[component.getName()] = component;
 
@@ -38,37 +27,47 @@ var Page = new Cuore.Class({
         component.setContainer(container);
     },
 
-    subcribeComponentEvents: function (component) {
-        var events = component.getManagedEvents();
-        for (var i = 0, eventName; eventName = events[i]; i++) {
-            (new Bus()).subscribe(component, eventName);
-        }
-    },
-
-    draw: function () {
-	    for(var component in this.components) {
+    this.draw = function () {
+	    for(var component in components) {
 		    var currentComponent = this.getComponent(component);
 		
-		   if (this.cleaners.indexOf(currentComponent.getName()) >= 0) {
+		   if (cleaners.indexOf(currentComponent.getName()) >= 0) {
                 $(currentComponent.getContainer()).innerHTML = '';
 	        }
 	        currentComponent.draw();
 	    }
-    },
+    };
 
-    $: function (name) {
+    this.getComponent = function (name) {
+        return components[name] || null;
+    };
+
+    this.getBaseURL = function () {
+        return baseURL;
+    };
+
+    this.initializeServices = function () {};
+    var initializeComponents = function () {};
+
+    this.setUp = function () {
+        this.initializeServices();
+        initializeComponents();
+    };
+
+    this.setUp(); 
+
+    var subcribeComponentEvents = function (component) {
+        var events = component.getManagedEvents();
+        for (var i = 0, eventName; eventName = events[i]; i++) {
+            (new Bus()).subscribe(component, eventName);
+        }
+    };
+
+    var $ = function (name) {
         return document.getElementById(name);
-    },
+    };
 
-    getComponent: function (name) {
-        return this.components[name] || null;
-    },
-
-    getBaseURL: function () {
-        return this.baseURL;
-    },
-
-    generateUUID: function () {
+    var generateUUID = function () {
         var S4Pattern = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
         var S4 = S4Pattern.replace(/[xy]/g, function (group) {
             var randomNumber = Math.random() * 16 | 0,
@@ -77,5 +76,6 @@ var Page = new Cuore.Class({
             return value.toString(16);
         });
         return S4;
-    }
-});
+    };
+
+};

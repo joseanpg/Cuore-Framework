@@ -2,20 +2,18 @@ describe("The Bus", function () {
 
     it("is a singleton", function () {
         var aBus = new Bus();
-        aBus.flag = "myName";
         var anotherBus = new Bus();
 
-        expect(aBus.flag).toEqual(anotherBus.flag);
+        expect(aBus).toEqual(anotherBus);
     });
 
-    it("is debugable", function () {
+    xit("is debugable", function () {
         var aBus = new Bus();
         expect(aBus.debug).toBeDefined();
     });
 
     it("could be reset", function () {
-        var aBus = new Bus();
-
+	    var aBus = new Bus();
         expect(aBus.hasSubscriptions()).toBeFalsy();
 
         aBus.subscribe("dummy", "test");
@@ -141,7 +139,7 @@ describe("The Bus", function () {
 
     });
 
-    function createDummySubscriber() {
+    var createDummySubscriber = function() {
         var dummySubscriber = {};
         dummySubscriber.eventDispatch = function (event, params) {
             this.recievedEvent = event;
@@ -149,7 +147,5 @@ describe("The Bus", function () {
         };
 
         return dummySubscriber;
-
     };
-
 });
