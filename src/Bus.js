@@ -1,4 +1,4 @@
-var Bus = function() {
+var Bus= function() {
     var subscriptions = [];
 	var instanceName = "Bus";
 
