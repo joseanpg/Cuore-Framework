@@ -1,26 +1,21 @@
-var Handler = new Cuore.Class({
+var Handler = function() {
+    var owner = null;
 
-    initialize: function () {
-        this.owner = null;
-        this.typeName = 'Handler';
-    },
+    this.handle = function (params) {},
 
-    handle: function (params) {},
-
-    dispatch: function (params) {
+    this.dispatch = function (params) {
         this.handle(params);
-    },
+    };
 
-    setOwner: function (anObject) {
-        this.owner = anObject;
-    },
+    this.setOwner = function (anObject) {
+        owner = anObject;
+    };
 
-    getOwner: function () {
-        return this.owner;
-    },
+    this.getOwner = function () {
+        return owner;
+    };
 
-    getPage: function () {
+    this.getPage = function () {
         return document.page;
-    }
-
-});
+    };
+};

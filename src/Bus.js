@@ -1,6 +1,12 @@
-var Bus= function() {
+var Bus = function() {
     var subscriptions = [];
 	var instanceName = "Bus";
+	
+	this.initialize = function() {
+        document[instanceName] = document[instanceName] || this;
+
+        return document[instanceName];   
+   	};
 
 	this.subscribe = function (subscriber, eventName) {
         if (!subscriptionExists(subscriber, eventName)) {
@@ -69,8 +75,6 @@ var Bus= function() {
             }
         }
     };
-
-    document[instanceName] = document[instanceName] || this;
-
-    return document[instanceName];
+    
+    return this.initialize();
 };

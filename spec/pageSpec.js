@@ -1,18 +1,18 @@
 describe("Page", function () {
 
     it("initialization calls initializeServices", function () {
-        var foo = false;
-        var testPage = function () {
-	        this.initializeServices = function() {foo = true; console.log('ini')};
+        var aPage = new Page();
+        var initializeServicesCalled = false;
+
+        aPage.initializeServices = function () {
+            initializeServicesCalled = true;
         };
-		testPage.prototype.constructor = testPage;
-		testPage.prototype = new Page();
-		
-		var aPage = new testPage();
-        expect(foo).toBeTruthy();
+
+         aPage.initialize();
+         expect(initializeServicesCalled).toBeTruthy();
     });
 
-    xit("initialization calls initializeComponents", function () {
+    it("initialization calls initializeComponents", function () {
         var aPage = new Page();
         var initializeComponentsCalled = false;
 
@@ -25,7 +25,7 @@ describe("Page", function () {
         expect(initializeComponentsCalled).toBeTruthy();
     });
 
-    xit("can add and fecth services", function () {
+    it("can add and fecth services", function () {
         var aPage = new Page();
         var abstractServiceName = "ABSTRACT";
         var aService = aPage.getService(abstractServiceName);
@@ -56,7 +56,7 @@ describe("Page", function () {
 
     });
 
-    xit("allows baseUrl initialization", function () {
+    it("allows baseUrl initialization", function () {
         var aPage = new Page();
         expect(aPage.getBaseURL()).toEqual("");
 
@@ -64,11 +64,12 @@ describe("Page", function () {
         expect(aPage.getBaseURL()).toEqual("A Base URL");
     });
 
-    xit("sets baseURL to the services", function () {
+    it("sets baseURL to the services", function () {
         var aBaseURL = "a base URL";
         var aPage = new Page(aBaseURL);
         var baseURLSet = "";
-        aService = {};
+        var aService = {};
+        
         aService.setBaseURL = function (baseURL) {
             baseURLSet = baseURL;
         };
@@ -77,7 +78,7 @@ describe("Page", function () {
         expect(baseURLSet).toEqual(aBaseURL);
     });
 
-    xit("allow component registration", function () {
+    it("allow component registration", function () {
         var aPage = new Page();
 
         var aComponent = createDummyComponent();
@@ -93,7 +94,7 @@ describe("Page", function () {
         expect(anotherComponentName).not.toEqual(componentName);
     });
 
-    xit("draw components when it is drawn", function () {
+    it("draw components when it is drawn", function () {
         var aPage = new Page();
         var aComponent = createDummyComponent();
         var anotherComponent = createDummyComponent();
@@ -110,7 +111,7 @@ describe("Page", function () {
     });
 
 
-    xit("drawing can replace container when asked", function () {
+    it("drawing can replace container when asked", function () {
         var container = new Element('div', {
             "id": "testingContainer"
         }).inject($("xhtmlToTest"));
@@ -132,7 +133,7 @@ describe("Page", function () {
     });
 
 
-    xit("subscribes components to the bus", function () {
+    it("subscribes components to the bus", function () {
         var aComponent = createDummyComponent();
         var aBus = new Bus();
         aBus.reset();
@@ -146,12 +147,13 @@ describe("Page", function () {
     });
 
 
-    function createDummyComponent() {
+    var createDummyComponent = function () {
         var aComponent = {};
 
         aComponent.setNameCalled = null;
         aComponent.drawCalled = false;
         aComponent.container = null;
+        
         aComponent.getManagedEvents = function () {
             return ["testEvent", "dummyEvent"];
         };

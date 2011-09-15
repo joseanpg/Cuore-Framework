@@ -1,84 +1,95 @@
-var Renderer = new Class({
+var Renderer = function() {
+    var panel = null;
+    var panelClasses = ["innerComponentDiv"];
+    var container = document.body;
+    var self = this;
 
-    initialize: function () {
-	    this.panel = null;
-	    this.panelClasses = ["innerComponentDiv"];
-      this.container = document.body;
-    },
-
-    setContainer: function (aContainer) {
-        this.container = $(aContainer);
-    },
-
-    getContainer: function () {
-        return this.container;
-    },
-
-    innerDivName: function (componentName) {
-        var divNameSuffix = "_inner"
-        return componentName + divNameSuffix;
-    },
-
-    render: function (component) {
-        if (!this.isDrawn()) {
-            this.draw(component);
+    this.setContainer = function (aContainer) {
+        container = document.getElementById(aContainer);
+    };
+    
+    this.getContainer = function() {
+         return container;
+    };
+    
+    this.render = function (component) {
+        if (!isDrawn()) {
+            draw(component);
         }
         this.update(component)
-    },
-
-    draw: function (component) {
-        this.panel = new Element('div', {
-            'id': this.innerDivName(component.getName())
-        }).inject(this.container);
-
-        this.setCurrentClasses();
-    },
-
-    isDrawn: function () {
-        return this.panel;
-    },
-
-    update: function (component) {
-        if (this.isDrawn()) {
-            this.updateWhenDrawn(component);
+    };
+    
+    this.update = function (component) {
+        if (isDrawn()) {
+            updateWhenDrawn(component);
         }
-    },
+    };
 
-    updateWhenDrawn: function (component) {
-	if(component.getText() != ''){
-	    this.panel.set('text', component.getText());
-	}
-    },
-
-    erase: function () {
-        var erase = this.panel;
+    this.erase = function () {
+        var erase = panel;
+        
         if (erase) {
-            $(erase).destroy(); // @TODO
+            container.removeChild(erase);
         }
-    },
+    };
 
-    setCurrentClasses: function () {
-        for (var i = 0, oneClass; oneClass = this.panelClasses[i]; i++) {
-            this.panel.addClass(oneClass);
+    this.addClass = function (aClass) {
+        panelClasses.push(aClass);
+        if (isDrawn()) {
+            panel.className += ' ' + aClass;
         }
-    },
+    };
 
-    addClass: function (aClass) {
-        this.panelClasses.push(aClass);
-        if (this.panel) {
-            this.panel.addClass(aClass);
+    this.removeClass = function (aClass) {
+        erase(panelClasses, aClass); // @TODO
+        if (isDrawn()) {
+            var reg = new RegExp("(^|\\s)" + aClass + "(\\s|$)", "g");
+            panel.className = panel.className.replace(reg, '');
         }
-    },
+    };
 
-    removeClass: function (aClass) {
-        this.panelClasses.erase(aClass);
-        if (this.panel) {
-            this.panel.removeClass(aClass);
+    this.getCurrentClasses = function () {
+        return panelClasses;
+    };
+    
+    this.innerDivName = function (componentName) {
+        var divNameSuffix = "_inner"
+        return componentName + divNameSuffix;
+    };
+    
+    var draw = function (component) {
+       var divID = self.innerDivName(component.getName());
+
+       panel = document.createElement('div');
+       panel.id = divID;
+       container.appendChild(panel);
+
+       setCurrentClasses();
+    };
+    
+    var updateWhenDrawn = function (component) {
+        if(component.getText()){
+            panel.set('text', component.getText());
         }
-    },
+    };
+    
+    var setCurrentClasses = function () {
+        for (var i = 0, oneClass; oneClass = panelClasses[i]; i++) {
+            panel.addClass(oneClass);
+        }
+    };
 
-    getCurrentClasses: function () {
-        return this.panelClasses;
-    },
+    var isDrawn = function () {
+        return panel;
+    };
+    
+    var erase = function(arrayName, arrayElement) {
+        for (var i = 0, len = arrayName.length; i < len; i++) { 
+            if(arrayName[i] === arrayElement) {
+                arrayName.splice(i, 1);
+            }
+        }
+        return arrayName;
+    };
 
-});
+};

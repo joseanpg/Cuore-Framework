@@ -4,7 +4,6 @@ describe("setTextHandler", function () {
         var aSetTextHandler = new SetTextHandler();
         expect(aSetTextHandler instanceof Handler).toBeTruthy();
         expect(aSetTextHandler instanceof SetTextHandler).toBeTruthy();
-        expect(aSetTextHandler.debug).toBeDefined();
     });
 
     it("sets the text of the owner reading as json object when dispatched", function () {
