@@ -1,148 +1,159 @@
 var Component = function() {
+    
+    //PUBLIC 
     this.service = 'NULL';
     this.procedure = 'nullProcedure';
+    this.name = 'aComponent';
 
-    var name = 'aComponent';
+
+    //PRIVATE
     var LABELSERVICENAME = 'LABELS';
     var I18NKey = null;
     var handlers = {};
     var SEPARATOR = '_';
     var text = '';
     var renderer = new Renderer();
-    var self = this;
-
-    this.initializeExecutionContext = function(customService, customProcedure) {
-        if (customService && customProcedure) {
-            this.service = customService;
-            this.procedure = customProcedure;
-        }
-    };
-
-    this.getService = function(aService) {
-        var theService = aService || this.service;
-        return document.page.getService(theService) || null;
-    };
-
-    this.setRenderer = function(customRenderer) {
+    
+    
+    this.setRenderer = function (customRenderer) {
         renderer = customRenderer;
+        return this;
     };
-
-    this.render = function() {
+    
+    this.render = function () {
         renderer.render(this);
+        return this;
     };
-
-    this.addHandler = function(eventName, handler) {
+    
+    this.addHandler = function (eventName, handler) {
         handlers[eventName] = handlers[eventName] || [];
         handler.setOwner(this);
         handlers[eventName].push(handler);
+        return this;
     };
-
-    this.addDispatcher = function(eventName, handler) {
-        this.addHandler(eventName, handler);
-    };
-
-    this.eventDispatch = function(eventName, params) {
+    
+    this.eventDispatch = function (eventName, params) {
         var eventsToDispatch = handlers[eventName];
         if (!eventsToDispatch) return;
-
         for (var i = 0, handler; handler = eventsToDispatch[i]; i++) {
             handler.handle(params);
         }
+        return this;
     };
-
-    this.getName = function() {
-        return name;
-    };
-
-    this.setName = function(aName) {
-        name = aName;
-    };
-
-    this.getManagedEvents = function() {
+    
+    this.getManagedEvents = function () {
         var handlersKeys = [];
         for (var handler in handlers) {
             handlersKeys.push(handler);
         }
         return handlersKeys;
     };
-
-    this.draw = function() {
-        this.render();
-        this.getLabel();
-    };
-
-    this.getContainer = function() {
+    
+    
+    this.getContainer = function () {
         return renderer.getContainer();
     };
-
-    this.setContainer = function(container) {
+    
+    this.setContainer = function (container) {
         renderer.setContainer(container);
+        return this;
     };
 
-    this.getI18NKey = function() {
+    this.getI18NKey = function () {
         return I18NKey;
     };
-
-    this.setI18NKey = function(key) {
-        if (!key) return;
-
+    
+    this.setI18NKey = function (key) {
         I18NKey = key;
         this.addHandler('LABELS_getLabel_EXECUTED_' + key, new SetTextHandler());
         new Bus().subscribe(this, 'LABELS_getLabel_EXECUTED_' + key);
+        return this;
     };
-
-    this.getText = function() {
+    
+    this.getText = function () {
         return text;
     };
-
-    this.setText = function(aText) {
+    
+    this.setText = function (aText) {
         text = aText;
-        updateRender();
+        renderer.update(this);
+        return this;
     };
 
-    this.getLabel = function() {
-        if (!I18NKey || !getLabelService()) return;
-
-        var params = {
-            key: I18NKey
-        };
-
-        getLabelService().execute('getLabel', params, true);
+    this.getLabel = function () {
+        var serv = this.getService(LABELSERVICENAME);
+        if (!I18NKey || ! ser; return null;
+        var params = { key: I18NKey };
+        serv.execute('getLabel', params, true);
     };
-
-    this.getUniqueID = function() {
+    
+    this.getUniqueID = function () {
         return renderer.innerDivName(name);
     };
-
-    this.destroy = function() {
+    
+    this.destroy = function () {
         renderer.erase();
         var bus = new Bus();
         bus.unsubscribe(this, this.getManagedEvents());
+        return this;
     };
-
-    this.addClass = function(aClass) {
+    
+    this.addClass = function (aClass) {
         renderer.addClass(aClass);
+        return this;
     };
 
-    this.removeClass = function(aClass) {
+    this.removeClass = function (aClass) {
         renderer.removeClass(aClass);
+        return this;
     };
-
-    this.execute = function(aService, aProcedure, params, asynchronous) {
+    
+    this.execute = function (aService, aProcedure, params, asynchronous) {
         var theService = aService || this.service;
         var theProcedure = aProcedure || this.procedure;
         var serviceInstance = this.getService(theService);
-
         if (serviceInstance) {
             serviceInstance.execute(theProcedure, params, asynchronous);
         }
+        return this;
     };
+    
 
-    var getLabelService = function() {
-        return self.getService(LABELSERVICENAME);
-    };
-
-    var updateRender = function() {
-        renderer.update(self);
-    };
 };
+
+
+//COMMON
+
+(function() {
+    
+    this.initializeExecutionContext = function (customService, customProcedure) {
+       this.service = customService;
+       this.procedure = customProcedure;
+       return this;
+    };
+    this.getService = function (aService) {
+        var theService = aService || this.service;
+        return document.page.getService(theService) || null;
+    };
+    this.addDispatcher = function (eventName, handler) {
+        this.addHandler(eventName, handler);
+        return this;
+    };
+
+    this.draw = function () {
+        this.render();
+        this.getLabel();
+        return this;
+    };
+
+    //Useless get-set
+    this.getName = function() {
+      return this.name;
+    }
+    this.setName = function (aName) {
+      this.name = aName;
+      return this
+      
+    };
+    
+).call(Component.prototype);
