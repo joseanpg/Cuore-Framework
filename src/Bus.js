@@ -1,31 +1,31 @@
 var Bus = function() {
     var subscriptions = [];
-	var instanceName = "Bus";
-	
-	this.initialize = function() {
+    var instanceName = "Bus";
+
+    this.initialize = function() {
         document[instanceName] = document[instanceName] || this;
 
-        return document[instanceName];   
-   	};
+        return document[instanceName];
+    };
 
-	this.subscribe = function (subscriber, eventName) {
+    this.subscribe = function(subscriber, eventName) {
         if (!subscriptionExists(subscriber, eventName)) {
             subscriptions.push([subscriber, eventName]);
         }
     };
 
-    this.unsubscribe = function (subscriber, events) {
+    this.unsubscribe = function(subscriber, events) {
         for (var i = 0, eventName; eventName = events[i]; i++) {
             var theSubscription = [subscriber, eventName];
             removeSubscription(theSubscription);
         }
     };
 
-    this.hasSubscriptions = function () {
+    this.hasSubscriptions = function() {
         return subscriptions.length > 0;
     };
 
-    this.subscribers = function (theEvent) {
+    this.subscribers = function(theEvent) {
         var selectedSubscribers = [];
         for (var i = 0, subscription; subscription = subscriptions[i]; i++) {
             if (subscription[1] === theEvent) {
@@ -35,11 +35,11 @@ var Bus = function() {
         return selectedSubscribers;
     };
 
-    this.hasSubscriptions = function () {
+    this.hasSubscriptions = function() {
         return subscriptions.length > 0;
     };
 
-    this.emit = function (eventName, params) {
+    this.emit = function(eventName, params) {
         var subscribers = this.subscribers(eventName);
 
         for (var i = 0, subscriber; subscriber = subscribers[i]; i++) {
@@ -48,10 +48,10 @@ var Bus = function() {
     };
 
     this.reset = function() {
-	    subscriptions = [];
+        subscriptions = [];
     };
 
-    var subscriptionExists = function (subscriber, eventName) {
+    var subscriptionExists = function(subscriber, eventName) {
         var result = false;
         var theSubscription = [subscriber, eventName];
 
@@ -66,7 +66,7 @@ var Bus = function() {
         return result;
     };
 
-    var removeSubscription = function (theSubscription) {
+    var removeSubscription = function(theSubscription) {
         for (var i = 0, subscription; subscription = subscriptions[i]; i++) {
             var sameSubscriber = (subscription[0] === theSubscription[0]);
             var sameEvent = (subscription[1] === theSubscription[1]);
@@ -75,6 +75,6 @@ var Bus = function() {
             }
         }
     };
-    
+
     return this.initialize();
 };

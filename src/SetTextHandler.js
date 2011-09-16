@@ -1,5 +1,4 @@
 var SetTextHandler = function() {
-
     this.handle = function (params) {
         if (params) {
             var text = params.answer;
